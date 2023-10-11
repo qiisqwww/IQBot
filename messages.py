@@ -17,6 +17,9 @@ START_MESSAGE = '''Привет!
 REGISTERED_MESSAGE = '''
 Вы были успешно зарегестрированы в системе!'''
 
+STATS_MESSAGE = '''
+In develop'''
+
 ALREADY_REGISTERED_MESSAGE = '''
 Вы уже зарегестрированы в системе'''
 
