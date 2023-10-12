@@ -9,9 +9,7 @@ HELP_MESSAGE = '''Список доступных команд:
 /iq - Узнать свой IQ
 /changeiq - Изменить свой IQ'''
 
-
 START_MESSAGE = '''Привет!
-
 Для регистрации в системе бота пропиши команду /register'''
 
 REGISTERED_MESSAGE = '''

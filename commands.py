@@ -12,8 +12,9 @@ from service import UsersService
 
 router = Router()
 
-router.message.filter(F.chat.type.in_({"group", "supergroup"}))  # Бот будет отвечать только в группах и супергруппах
 router.message.middleware(MainMiddleware())
+router.message.filter(F.chat.type.in_({"group", "supergroup"}))  # Бот будет отвечать только в группах и супергруппах
+
 
 @router.message(Command('start'))  # Обработка команды /start
 async def start_cmd(message: types.Message) -> None:
