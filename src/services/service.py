@@ -10,7 +10,7 @@ class UsersService:
     _conn: sq.Connection
 
     def __init__(self) -> None:
-        self._con = sq.connect("database/bot.db")
+        self._con = sq.connect("databse/bot.db")
         logging.info('connected to database')
 
     def register(self,user_id: int, chat_id: int, username: str) -> None:

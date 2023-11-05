@@ -7,7 +7,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from src.commands import (iq_router,
                           reg_router,
                           static_router)
-from config import BOT_TOKEN
+from src.config import BOT_TOKEN
 from src.services import UsersService
 
 
