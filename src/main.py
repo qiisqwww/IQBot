@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from src.commands import (iq_router,
                           reg_router,
-                          static_router)
+                          statistic_router)
 from src.config import BOT_TOKEN
 from src.services import UsersService
 
@@ -18,7 +18,7 @@ async def main():
     dp = Dispatcher(storage=storage)
     dp.include_routers(iq_router,
                        reg_router,
-                       static_router)
+                       statistic_router)
     logging.basicConfig(filename='logs/logs.log',
                         level=logging.DEBUG,
                         format="%(asctime)s %(levelname)s %(message)s")

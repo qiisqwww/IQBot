@@ -5,12 +5,14 @@ from aiogram.filters import Command
 
 from src.messages import START_MESSAGE, REGISTERED_MESSAGE
 from src.keyboards import load_start_kb, load_default_buttons
-from src.middlewares.middlewares import MainMiddleware
+from src.middlewares import RegMiddleware
 from src.services.service import UsersService
+
 
 router = Router()
 
-router.message.middleware(MainMiddleware())
+
+router.message.middleware(RegMiddleware())
 router.message.filter(F.chat.type.in_({"group", "supergroup"}))  # Бот будет отвечать только в группах и супергруппах
 
 
