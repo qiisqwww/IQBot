@@ -13,9 +13,10 @@ def load_default_buttons() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.add(KeyboardButton(text = '/iq'),
                 KeyboardButton(text = '/changeiq'),
-                KeyboardButton(text = '/help'),
-                KeyboardButton(text = '/leaderboard'),
-                KeyboardButton(text = '/dumb'))
+               # KeyboardButton(text = '/help'),
+               # KeyboardButton(text = '/leaderboard'),
+                KeyboardButton(text = '/dumb')
+                )
 
     builder.adjust(3)
 

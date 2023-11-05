@@ -1,6 +1,6 @@
 venv
-logs.log
-.env.txt
-bot.db
+src/logs/logs.log
+src/config/.env
+src/database/bot.db
 __pycache__
 .idea

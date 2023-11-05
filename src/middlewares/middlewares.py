@@ -6,9 +6,9 @@ from aiogram.types import Message
 from typing import Callable, Dict, Any, Awaitable
 from aiogram.dispatcher.flags import get_flag
 
-from keyboards import load_start_kb, load_default_buttons
-from messages import NOT_AVAILABLE_NOW_MESSAGE, ALREADY_REGISTERED_MESSAGE, NOT_REGISTERED_MESSAGE
-from service import UsersService
+from src.keyboards import load_default_buttons
+from src.messages import NOT_AVAILABLE_NOW_MESSAGE, ALREADY_REGISTERED_MESSAGE
+from src.services.service import UsersService
 
 
 __all__ = ["MainMiddleware"]
@@ -35,7 +35,6 @@ class MainMiddleware(BaseMiddleware):
         with UsersService() as con:
             if reg:   # Если есть флаг reg, то проверяем его содержимое (у /register и (/iq и /changeiq) отличается)
                 if flag_matching(reg,'mustberegistered') and not con.is_user_registered(user_id,chat_id):  # Проверка на то, зарегестрирован ли юзер
-                    await event.answer(NOT_REGISTERED_MESSAGE, reply_markup=load_start_kb())
                     logging.error('user must be registered for this command, middleware finished')
                     return
                 elif flag_matching(reg, 'mustnotberegistered') and con.is_user_registered(user_id,chat_id):  # Проверка на то, не зарегестрирован ли уже пользователь
@@ -55,10 +54,3 @@ class MainMiddleware(BaseMiddleware):
 
 def flag_matching(flag: str, flag_data) -> bool:
     return flag == flag_data
-
-async def must_be_registered(flag: str, flag_data:str,event: Message, user_id: int, chat_id: int) -> bool:
-    with UsersService() as con:
-        if flag == flag_data and not con.is_user_registered(user_id,chat_id):
-            await event.answer(NOT_REGISTERED_MESSAGE, reply_markup=load_start_kb())
-            logging.error('user must be registered for this command, middleware finished')
-            return True

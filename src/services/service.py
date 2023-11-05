@@ -3,22 +3,33 @@ import logging
 from random import randint
 from time import time
 
-__all__ = ["UsersService", "create_table"]
+__all__ = ["UsersService"]
+
 
 class UsersService:
     _conn: sq.Connection
 
     def __init__(self) -> None:
-        self._con = sq.connect(r'database\bot.db')
+        self._con = sq.connect("database/bot.db")
         logging.info('connected to database')
 
     def register(self,user_id: int, chat_id: int, username: str) -> None:
         cur = self._con.cursor()
 
-        count_id = cur.execute("""SELECT COUNT(*) FROM users""").fetchone()[0]  # Создаем id пользователя с помощью кол-ва участников
-        cur.execute("INSERT INTO users VALUES(?,?,0,0,?,?)", (count_id,user_id,chat_id,username))  # Добавляем строчку в таблицу
+        cur.execute("INSERT INTO users VALUES(?,0,0,?,?)", (user_id,chat_id,username))  # Добавляем строчку в таблицу
 
         logging.info('registered in database')
+
+    def create_table(self):
+        cur = self._con.cursor()
+        cur_command = """CREATE TABLE IF NOT EXISTS users(
+                            telegram_id INTEGER,
+                            iq INTEGER NOT NULL DEFAULT 0,
+                            call_time INTEGER NOT NULL DEFAULT 0,
+                            chat_id INTEGER,
+                            user_name INTEGER)"""
+
+        cur.execute(cur_command)
 
     def get_iq(self, user_id: int, chat_id: int) -> int:
         cur = self._con.cursor()
@@ -64,8 +75,7 @@ class UsersService:
         cur = self._con.cursor()
 
         users = self._get_all_users_id(chat_id)
-
-        return user_id in users and self._get_users_count() > 0
+        return user_id in users
 
     def _get_users_count(self) -> int:
         cur = self._con.cursor()
@@ -90,17 +100,4 @@ class UsersService:
         self._con.close()
         logging.info('disconnected from database')
 
-def create_table() -> None:
-
-    with sq.connect('database\\bot.db') as con:
-        cur = con.cursor()
-        cur_command = """CREATE TABLE IF NOT EXISTS users(
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    telegram_id TEXT,
-                    iq INTEGER NOT NULL DEFAULT 0,
-                    call_time INTEGER NOT NULL DEFAULT 0,
-                    chat_id INTEGER,
-                    user_name INTEGER)"""
-
-        cur.execute(cur_command)
 
