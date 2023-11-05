@@ -9,7 +9,7 @@ from src.messages import HELP_MESSAGE
 __all__ = ["Router"]
 
 
-router = Router
+router = Router()
 
 
 @router.message(Command('help'))

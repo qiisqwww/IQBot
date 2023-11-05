@@ -28,9 +28,9 @@ async def get_leaderboard_cmd(message: types.Message) -> None:
 async def get_dumb_cmd(message: types.Message) -> None:
     with UsersService() as con:
         dumb = con.get_dumb(chat_id = message.chat.id)
-        await message.answer(dumb_message(dumb[0], dumb[1]))"""
+        await message.answer(dumb_message(dumb[0], dumb[1]))
 
 
 @router.message(Command('stats'))
 async def stats_cmd(message: types.Message) -> None:
-    await message.reply(STATS_MESSAGE)
+    await message.reply(STATS_MESSAGE)"""

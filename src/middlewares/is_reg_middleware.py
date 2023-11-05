@@ -29,15 +29,17 @@ class IsRegMiddleware(BaseMiddleware):
 
         changeiq = get_flag(data, "changeiq")
 
-        with UsersService as con:
-            if con.is_user_registered(user_id, chat_id):
+        with UsersService() as con:
+            if not con.is_user_registered(user_id, chat_id):
                 await event.answer(NOT_REGISTERED_MESSAGE, reply_markup=load_default_buttons())
                 logging.error('user must be registered for this command, middleware finished')
                 return
 
-        if changeiq:
-            call_time = con.get_call_time(user_id=user_id, chat_id=chat_id)
-            if time() - call_time < 3600:  # lasttime - время предыдущего успешного запроса /changeiq в секундах
-                await event.answer(NOT_AVAILABLE_NOW_MESSAGE)
-                logging.error('not enough time left before previous change, middleware finished')
-                return
+            if changeiq:
+                call_time = con.get_call_time(user_id=user_id, chat_id=chat_id)
+                if time() - call_time < 3600:  # lasttime - время предыдущего успешного запроса /changeiq в секундах
+                    await event.answer(NOT_AVAILABLE_NOW_MESSAGE)
+                    logging.error('not enough time left before previous change, middleware finished')
+                    return
+
+        return await handler(event, data)

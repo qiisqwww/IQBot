@@ -10,13 +10,13 @@ class UsersService:
     _conn: sq.Connection
 
     def __init__(self) -> None:
-        self._con = sq.connect("databse/bot.db")
+        self._con = sq.connect("database/bot.db")
         logging.info('connected to database')
 
-    def register(self,user_id: int, chat_id: int, username: str) -> None:
+    def register(self,user_id: int, chat_id: int) -> None:
         cur = self._con.cursor()
 
-        cur.execute("INSERT INTO users VALUES(?,0,0,?,?)", (user_id,chat_id,username))  # Добавляем строчку в таблицу
+        cur.execute("INSERT INTO users VALUES(?,0,0,?)", (user_id,chat_id))  # Добавляем строчку в таблицу
 
         logging.info('registered in database')
 
@@ -26,8 +26,7 @@ class UsersService:
                             telegram_id INTEGER,
                             iq INTEGER NOT NULL DEFAULT 0,
                             call_time INTEGER NOT NULL DEFAULT 0,
-                            chat_id INTEGER,
-                            user_name INTEGER)"""
+                            chat_id INTEGER"""
 
         cur.execute(cur_command)
 
