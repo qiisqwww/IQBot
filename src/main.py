@@ -14,13 +14,14 @@ from src.services import UsersService
 
 async def main():
     storage = MemoryStorage()
-
     bot = Bot(BOT_TOKEN)
     dp = Dispatcher(storage=storage)
+
     dp.include_routers(iq_router,
                        reg_router,
                        statistic_router,
                        help_router)
+
     logging.basicConfig(filename='logs/logs.log',
                         level=logging.DEBUG,
                         format="%(asctime)s %(levelname)s %(message)s")

@@ -4,7 +4,7 @@ from aiogram import types, Router, F
 from aiogram.filters import Command
 
 from src.messages import START_MESSAGE, REGISTERED_MESSAGE
-from src.keyboards import load_start_kb, load_default_buttons
+from src.buttons import load_start_kb, load_default_buttons
 from src.middlewares import RegMiddleware
 from src.services.service import UsersService
 

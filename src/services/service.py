@@ -22,13 +22,12 @@ class UsersService:
 
     def create_table(self):
         cur = self._con.cursor()
-        cur_command = """CREATE TABLE IF NOT EXISTS users(
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS users(
                             telegram_id INTEGER,
                             iq INTEGER NOT NULL DEFAULT 0,
                             call_time INTEGER NOT NULL DEFAULT 0,
-                            chat_id INTEGER"""
-
-        cur.execute(cur_command)
+                            chat_id INTEGER)""")
 
     def get_iq(self, user_id: int, chat_id: int) -> int:
         cur = self._con.cursor()
@@ -50,14 +49,14 @@ class UsersService:
 
     def get_leaderboard(self,chat_id: int) -> list:
         cur = self._con.cursor()
-        board = cur.execute("SELECT username, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
+        board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
         leaderboard = sorted(board, key=lambda r: (r[1], r[0]),reverse=True)[:10 if len(board) >= 10 else len(board)]
 
         return leaderboard
 
     def get_dumb(self,chat_id:int) -> list:
         cur = self._con.cursor()
-        board = cur.execute("SELECT username, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
+        board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
         dumb = sorted(board, key=lambda r: (r[1], r[0]))[0]
 
         return dumb

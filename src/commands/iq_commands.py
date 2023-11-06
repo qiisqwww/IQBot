@@ -5,7 +5,7 @@ from aiogram.filters import Command
 
 from src.messages import (your_iq_message,
                       iq_changes_message,)
-from src.keyboards import load_default_buttons
+from src.buttons import load_default_buttons
 from src.middlewares import IsRegMiddleware
 from src.services.service import UsersService
 

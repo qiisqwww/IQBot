@@ -6,7 +6,7 @@ from aiogram.types import Message
 from typing import Callable, Dict, Any, Awaitable
 from aiogram.dispatcher.flags import get_flag
 
-from src.keyboards import load_default_buttons
+from src.buttons import load_default_buttons
 from src.messages import (NOT_REGISTERED_MESSAGE,
                           NOT_AVAILABLE_NOW_MESSAGE)
 from src.services.service import UsersService

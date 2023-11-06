@@ -9,12 +9,13 @@ def load_start_kb() -> ReplyKeyboardMarkup:
 
     return builder.as_markup(resize_keyboard = True,one_time_keyboard = True)
 
+
 def load_default_buttons() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.add(KeyboardButton(text = '/iq'),
                 KeyboardButton(text = '/changeiq'),
-               # KeyboardButton(text = '/help'),
-               # KeyboardButton(text = '/leaderboard'),
+                KeyboardButton(text = '/help'),
+                KeyboardButton(text = '/leaderboard'),
                 KeyboardButton(text = '/dumb')
                 )
 
