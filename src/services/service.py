@@ -13,10 +13,10 @@ class UsersService:
         self._con = sq.connect("database/bot.db")
         logging.info('connected to database')
 
-    def register(self,user_id: int, chat_id: int) -> None:
+    def register(self, user_id: int, chat_id: int) -> None:
         cur = self._con.cursor()
 
-        cur.execute("INSERT INTO users VALUES(?,0,0,?)", (user_id,chat_id))  # Добавляем строчку в таблицу
+        cur.execute("INSERT INTO users VALUES(?,0,0,?)", (user_id, chat_id))  # Добавляем строчку в таблицу
 
         logging.info('registered in database')
 
@@ -32,12 +32,13 @@ class UsersService:
     def get_iq(self, user_id: int, chat_id: int) -> int:
         cur = self._con.cursor()
 
-        cur.execute("SELECT iq FROM users WHERE telegram_id == ? AND chat_id = ?",(user_id, chat_id))  # Ищем IQ юзера через его tg id
+        cur.execute("SELECT iq FROM users WHERE telegram_id == ? AND chat_id = ?",
+                    (user_id, chat_id))
         iq = cur.fetchone()[0]
 
         return iq
 
-    def change_iq(self,user_id: int, old_iq: int, chat_id: int) -> int:
+    def change_iq(self, user_id: int, old_iq: int, chat_id: int) -> int:
         cur = self._con.cursor()
 
         new_iq = old_iq + randint(-10, 10)
@@ -47,31 +48,29 @@ class UsersService:
 
         return new_iq
 
-    def get_leaderboard(self,chat_id: int) -> list:
+    def get_leaderboard(self, chat_id: int) -> list:
         cur = self._con.cursor()
         board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
-        leaderboard = sorted(board, key=lambda r: (r[1], r[0]),reverse=True)[:10 if len(board) >= 10 else len(board)]
+        leaderboard = sorted(board, key=lambda r: (r[1], r[0]), reverse=True)[:10 if len(board) >= 10 else len(board)]
 
         return leaderboard
 
-    def get_dumb(self,chat_id:int) -> list:
+    def get_dumb(self, chat_id: int) -> list:
         cur = self._con.cursor()
         board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
         dumb = sorted(board, key=lambda r: (r[1], r[0]))[0]
 
         return dumb
 
-    def get_call_time(self,user_id: int, chat_id: int) -> int:
+    def get_call_time(self, user_id: int, chat_id: int) -> int:
         cur = self._con.cursor()
 
-        cur.execute("SELECT call_time FROM users WHERE telegram_id == ? AND chat_id = ?",(user_id,chat_id))
+        cur.execute("SELECT call_time FROM users WHERE telegram_id == ? AND chat_id = ?", (user_id, chat_id))
         call_time = cur.fetchone()[0]
 
         return call_time
 
-    def is_user_registered(self,user_id: int, chat_id: int) -> bool:
-        cur = self._con.cursor()
-
+    def is_user_registered(self, user_id: int, chat_id: int) -> bool:
         users = self._get_all_users_id(chat_id)
         return user_id in users
 
@@ -82,7 +81,7 @@ class UsersService:
 
         return count
 
-    def _get_all_users_id(self,chat_id: int) -> list:
+    def _get_all_users_id(self, chat_id: int) -> list:
         cur = self._con.cursor()
 
         data = cur.execute("SELECT telegram_id FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
@@ -97,5 +96,3 @@ class UsersService:
         self._con.commit()
         self._con.close()
         logging.info('disconnected from database')
-
-

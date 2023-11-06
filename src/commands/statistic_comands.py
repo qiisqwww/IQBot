@@ -20,19 +20,22 @@ router.message.filter(F.chat.type.in_({"group", "supergroup"}))
 
 @router.message(Command('leaderboard'))
 async def get_leaderboard_cmd(message: types.Message) -> None:
+    logging.info(f"leaderboard was sent to {message.from_user.id}")
+
     with UsersService() as con:
-        leaderboard = con.get_leaderboard(chat_id = message.chat.id)
+        leaderboard = con.get_leaderboard(chat_id=message.chat.id)
     await message.answer(leaderboard_message(leaderboard),
                          parse_mode=ParseMode.HTML)
 
 
 @router.message(Command('dumb'))
 async def get_dumb_cmd(message: types.Message) -> None:
-    with UsersService() as con:
-        dumb = con.get_dumb(chat_id = message.chat.id)
+    logging.info(f"dumb was sent to {message.from_user.id}")
 
-    await message.answer(dumb_message(dumb[0], dumb[1]),
-                        parse_mode=ParseMode.HTML)
+    with UsersService() as con:
+        dumb = con.get_dumb(chat_id=message.chat.id)
+
+    await message.answer(dumb_message(dumb[0], dumb[1]), parse_mode=ParseMode.HTML)
 
 
 """@router.message(Command('stats'))

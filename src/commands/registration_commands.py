@@ -18,14 +18,17 @@ router.message.filter(F.chat.type.in_({"group", "supergroup"}))
 
 @router.message(Command('start'))
 async def start_cmd(message: types.Message) -> None:
-    await message.reply(START_MESSAGE,reply_markup=load_start_kb())
-    logging.info('start command')
+    logging.info(f"start command was handled from {message.from_user.id}")
+
+    await message.reply(START_MESSAGE, reply_markup=load_start_kb())
 
 
-@router.message(Command('register'),flags = {"reg" : "mustnotberegistered"})
-async def reg_cmd(message:types.Message) -> None:
+@router.message(Command('register'), flags={"reg": "mustnotberegistered"})
+async def reg_cmd(message: types.Message) -> None:
+    logging.info(f"register command was handled from {message.from_user.id}")
+
     with UsersService() as con:
         con.register(user_id=message.from_user.id,
                      chat_id=message.chat.id)
 
-        await message.reply(REGISTERED_MESSAGE,reply_markup=load_default_buttons())
+        await message.reply(REGISTERED_MESSAGE, reply_markup=load_default_buttons())
