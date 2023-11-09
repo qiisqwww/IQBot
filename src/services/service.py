@@ -1,7 +1,8 @@
 import sqlite3 as sq
-import logging
 from random import randint
 from time import time
+
+from loguru import logger
 
 __all__ = ["UsersService"]
 
@@ -11,14 +12,12 @@ class UsersService:
 
     def __init__(self) -> None:
         self._con = sq.connect("database/bot.db")
-        logging.info('connected to database')
+        logger.info('Connected to database.')
 
     def register(self, user_id: int, chat_id: int) -> None:
         cur = self._con.cursor()
 
         cur.execute("INSERT INTO users VALUES(?,0,0,?)", (user_id, chat_id))  # Добавляем строчку в таблицу
-
-        logging.info('registered in database')
 
     def create_table(self):
         cur = self._con.cursor()
@@ -95,4 +94,5 @@ class UsersService:
             print(exc_type, exc_value, tb)
         self._con.commit()
         self._con.close()
-        logging.info('disconnected from database')
+
+        logger.info('Disconnected from database.')

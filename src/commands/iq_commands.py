@@ -1,7 +1,6 @@
-import logging
-
 from aiogram import types, Router, F
 from aiogram.filters import Command
+from loguru import logger
 
 from src.messages import your_iq_message, iq_changes_message
 from src.buttons import load_default_buttons
@@ -18,7 +17,7 @@ router.message.filter(F.chat.type.in_({"group", "supergroup"}))
 
 @router.message(Command('iq'))
 async def get_iq_cmd(message: types.Message) -> None:
-    logging.info(f"iq command was handled from {message.from_user.id}")
+    logger.info(f"Iq command was handled from {message.from_user.id}.")
 
     with UsersService() as con:
         iq = con.get_iq(user_id=message.from_user.id, chat_id=message.chat.id)
@@ -27,7 +26,7 @@ async def get_iq_cmd(message: types.Message) -> None:
 
 @router.message(Command('changeiq'), flags={"changeiq": "true"})
 async def change_iq_cmd(message: types.Message) -> None:
-    logging.info(f"changeiq command was handled from {message.from_user.id}")
+    logger.info(f"Changeiq command was handled from {message.from_user.id}.")
 
     with UsersService() as con:
         old_iq = con.get_iq(user_id=message.from_user.id, chat_id=message.chat.id)

@@ -1,3 +1,4 @@
-from .config import BOT_TOKEN
+from .config import BOT_TOKEN, LOGGING_PATH
 
-__all__ = ["BOT_TOKEN"]
+__all__ = ["BOT_TOKEN",
+           "LOGGING_PATH"]

@@ -1,15 +1,26 @@
 import asyncio
-import logging
 
 from aiogram import Dispatcher, Bot
 from aiogram.fsm.storage.memory import MemoryStorage
+from loguru import logger
 
 from src.commands import (iq_router,
                           reg_router,
                           statistic_router,
                           help_router)
-from src.config import BOT_TOKEN
+from src.config import BOT_TOKEN, LOGGING_PATH
 from src.services import UsersService
+
+
+def init_logger() -> None:
+    logger.add(
+        LOGGING_PATH,
+        compression="zip",
+        rotation="500 MB",
+        enqueue=True,
+        backtrace=True,
+        diagnose=True,
+    )
 
 
 async def main():
@@ -22,9 +33,7 @@ async def main():
                        statistic_router,
                        help_router)
 
-    logging.basicConfig(filename='logs/logs.log',
-                        level=logging.DEBUG,
-                        format="%(asctime)s %(levelname)s %(message)s")
+    init_logger()
 
     with UsersService() as con:
         con.create_table()
