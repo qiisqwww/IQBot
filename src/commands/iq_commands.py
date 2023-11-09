@@ -4,18 +4,19 @@ from loguru import logger
 
 from src.messages import your_iq_message, iq_changes_message
 from src.buttons import load_default_buttons
-from src.middlewares import IsRegMiddleware
-from src.services.service import UsersService
+from src.middlewares import IsRegMiddleware, IQTimeoutMiddleware
+from src.services.users_service import UsersService
 
 
-router = Router()
+iq_router = Router()
 
 
-router.message.middleware(IsRegMiddleware())
-router.message.filter(F.chat.type.in_({"group", "supergroup"}))
+iq_router.message.middleware(IsRegMiddleware())
+iq_router.message.middleware(IQTimeoutMiddleware())
+iq_router.message.filter(F.chat.type.in_({"group", "supergroup"}))
 
 
-@router.message(Command('iq'))
+@iq_router.message(Command('iq'))
 async def get_iq_cmd(message: types.Message) -> None:
     logger.info(f"Iq command was handled from {message.from_user.id}.")
 
@@ -24,7 +25,7 @@ async def get_iq_cmd(message: types.Message) -> None:
         await message.reply(your_iq_message(iq), reply_markup=load_default_buttons())
 
 
-@router.message(Command('changeiq'), flags={"changeiq": "true"})
+@iq_router.message(Command('changeiq'), flags={"changeiq": "true"})
 async def change_iq_cmd(message: types.Message) -> None:
     logger.info(f"Changeiq command was handled from {message.from_user.id}.")
 

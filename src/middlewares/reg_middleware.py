@@ -6,7 +6,7 @@ from loguru import logger
 
 from src.buttons import load_default_buttons
 from src.messages import ALREADY_REGISTERED_MESSAGE
-from src.services.service import UsersService
+from src.services.users_service import UsersService
 
 
 __all__ = ["RegMiddleware"]

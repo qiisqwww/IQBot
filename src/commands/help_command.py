@@ -6,13 +6,13 @@ from loguru import logger
 from src.messages import HELP_MESSAGE
 
 
-__all__ = ["Router"]
+__all__ = ["help_router"]
 
 
-router = Router()
+help_router = Router()
 
 
-@router.message(Command('help'))
+@help_router.message(Command('help'))
 async def help_cmd(message: types.Message) -> None:
     logger.info(f"Help command was sent to {message.from_user.id}.")
 

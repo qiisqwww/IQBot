@@ -1,6 +1,5 @@
 import sqlite3 as sq
 from random import randint
-from time import time
 
 from loguru import logger
 
@@ -17,7 +16,7 @@ class UsersService:
     def register(self, user_id: int, chat_id: int) -> None:
         cur = self._con.cursor()
 
-        cur.execute("INSERT INTO users VALUES(?,0,0,?)", (user_id, chat_id))  # Добавляем строчку в таблицу
+        cur.execute("INSERT INTO users VALUES(?,0,?)", (user_id, chat_id))  # Добавляем строчку в таблицу
 
     def create_table(self):
         cur = self._con.cursor()
@@ -25,7 +24,6 @@ class UsersService:
         cur.execute("""CREATE TABLE IF NOT EXISTS users(
                             telegram_id INTEGER,
                             iq INTEGER NOT NULL DEFAULT 0,
-                            call_time INTEGER NOT NULL DEFAULT 0,
                             chat_id INTEGER)""")
 
     def get_iq(self, user_id: int, chat_id: int) -> int:
@@ -42,8 +40,8 @@ class UsersService:
 
         new_iq = old_iq + randint(-10, 10)
 
-        cur.execute("UPDATE users SET iq = ?, call_time = ? WHERE telegram_id = ? AND chat_id = ?",
-                    (new_iq, time(), user_id, chat_id))  # в БД заносим новый iq и время вызова
+        cur.execute("UPDATE users SET iq = ? WHERE telegram_id = ? AND chat_id = ?",
+                    (new_iq, user_id, chat_id))  # в БД заносим новый iq и время вызова
 
         return new_iq
 
