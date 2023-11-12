@@ -26,11 +26,11 @@ class IQTimeoutMiddleware(BaseMiddleware):
         if not changeiq:
             return await handler(event,data)
 
-        with RedisService() as storage:
-            if storage.get_user_chngiq(user_id+chat_id):
+        async with RedisService() as storage:
+            if await storage.get_user_chngiq(user_id+chat_id):
                 await event.answer(NOT_AVAILABLE_NOW_MESSAGE)
                 logger.warning(f'Not enough time left before change for {user_id}.')
                 return
 
-            storage.set_user_chngiq(user_id+chat_id)
+            await storage.set_user_chngiq(user_id+chat_id)
             return await handler(event, data)
