@@ -1,0 +1,9 @@
+[Unit]
+After=network.target
+Description=IQ Bot
+
+[Service]
+Type=simple
+ExecStart=/var/www/IQBot/scripts/start.sh
+ExecStop=/var/www/IQBot/scripts/down.sh
+Restart=always
