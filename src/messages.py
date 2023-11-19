@@ -1,3 +1,5 @@
+from src.dto import User
+
 __all__ = ["HELP_MESSAGE",
            "START_MESSAGE",
            "REGISTERED_MESSAGE",
@@ -51,11 +53,13 @@ def iq_changes_message(old_iq: int, new_iq: int) -> str:
     return f'К сожалению, Ваш iq уменьшился на {new_iq - old_iq}'
 
 
-def leaderboard_message(leaderboard: list) -> str:
+def leaderboard_message(leaderboard: list[User]) -> str:
     leaderboard_text = f'Топ {len(leaderboard)} пользователей:\n\n'
 
-    for i, (user_id, iq) in enumerate(leaderboard):
-        leaderboard_text += f"""{i + 1}. <a href="tg://user?id={user_id}">{iq} </a>IQ\n"""
+    i = 0
+    for leader in leaderboard:
+        leaderboard_text += f"""{i + 1}. <a href="tg://user?id={leader.telegram_id}">{leader.iq} </a>IQ\n"""
+        i+=1
 
     return leaderboard_text
 

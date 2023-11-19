@@ -2,22 +2,39 @@ version: '3.9'
 
 services:
   iq_bot:
+    env_file:
+      - ./.env/.env
     build:
       dockerfile: Dockerfile
       context: ./
     volumes:
-      - /var/log/iqbot:/app/logs
+      - /var/www/IQBot:/app/logs
+      - /var/www/IQBot:/app/database
     depends_on:
-      - redis
-
+      redis:
+        condition: service_started
+      postgres:
+          condition: service_healthy
 
   redis:
     image: redis:7.2.3
     restart: on-failure
     ports:
-      - 6381:6381
+      - 6379:6379
     volumes:
-      - /var/log/iqbot:/data
+      - /var/www/IQBot:/data
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      - ./.env/.database.env
+    volumes:
+      - /var/lib/headman_bot_db:/var/lib/posgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
     redis_data:

@@ -1,96 +1,61 @@
-import sqlite3 as sq
 from random import randint
 
 from loguru import logger
 
-__all__ = ["UsersService"]
+from src.services.service import Service
+from src.dto import User
 
 
-class UsersService:
-    _conn: sq.Connection
+class UsersService(Service):
+    async def register(self, user_id: int, chat_id: int) -> None:
+        query = ("INSERT INTO users "
+                 "(telegram_id, iq, chat_id)"
+                 "VALUES ($1, 0, $2)")
 
-    def __init__(self) -> None:
-        self._con = sq.connect("database/bot.db")
-        logger.info('Connected to database.')
+        await self._con.execute(query, user_id, chat_id)
 
-    def register(self, user_id: int, chat_id: int) -> None:
-        cur = self._con.cursor()
-
-        cur.execute("INSERT INTO users VALUES(?,0,?)", (user_id, chat_id))  # Добавляем строчку в таблицу
-
-    def create_table(self):
-        cur = self._con.cursor()
-
-        cur.execute("""CREATE TABLE IF NOT EXISTS users(
-                            telegram_id INTEGER,
-                            iq INTEGER NOT NULL DEFAULT 0,
-                            chat_id INTEGER)""")
-
-    def get_iq(self, user_id: int, chat_id: int) -> int:
-        cur = self._con.cursor()
-
-        cur.execute("SELECT iq FROM users WHERE telegram_id == ? AND chat_id = ?",
-                    (user_id, chat_id))
-        iq = cur.fetchone()[0]
+    async def get_iq(self, user_id: int, chat_id: int) -> int:
+        query = "SELECT iq FROM users WHERE telegram_id = $1 AND chat_id = $2"
+        iq = await self._con.fetchval(query, user_id, chat_id)
 
         return iq
 
-    def change_iq(self, user_id: int, old_iq: int, chat_id: int) -> int:
-        cur = self._con.cursor()
-
+    async def change_iq(self, user_id: int, old_iq: int, chat_id: int) -> int:
+        query = "UPDATE users SET iq = $1 WHERE telegram_id = $2 AND chat_id = $3"
         new_iq = old_iq + randint(-10, 10)
 
-        cur.execute("UPDATE users SET iq = ? WHERE telegram_id = ? AND chat_id = ?",
-                    (new_iq, user_id, chat_id))  # в БД заносим новый iq и время вызова
-
+        await self._con.execute(query, new_iq, user_id, chat_id)
         return new_iq
 
-    def get_leaderboard(self, chat_id: int) -> list:
-        cur = self._con.cursor()
-        board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
-        leaderboard = sorted(board, key=lambda r: (r[1], r[0]), reverse=True)[:10 if len(board) >= 10 else len(board)]
+    async def get_leaderboard(self, chat_id: int) -> list:
+        query = "SELECT * FROM users WHERE chat_id = $1"
+        records = await self._con.fetch(query, chat_id)
 
-        return leaderboard
+        board = [User.from_mapping(record) for record in records]
 
-    def get_dumb(self, chat_id: int) -> list:
-        cur = self._con.cursor()
-        board = cur.execute("SELECT telegram_id, iq FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
-        dumb = sorted(board, key=lambda r: (r[1], r[0]))[0]
+        if len(board) < 10:
+            return board
+        return board[:10]
 
-        return dumb
+    async def get_dumb(self, chat_id: int) -> User:
+        query = "SELECT * FROM users WHERE chat_id = $1"
+        records = await self._con.fetch(query, chat_id)
 
-    def get_call_time(self, user_id: int, chat_id: int) -> int:
-        cur = self._con.cursor()
+        board = [User.from_mapping(record) for record in records]
+        return board[-1]
 
-        cur.execute("SELECT call_time FROM users WHERE telegram_id == ? AND chat_id = ?", (user_id, chat_id))
-        call_time = cur.fetchone()[0]
+    async def is_user_registered(self, user_id: int, chat_id: int) -> bool:
+        query = "SELECT telegram_id FROM users WHERE chat_id = $1"
+        records = await self._con.fetch(query, chat_id)
 
-        return call_time
+        for record in records:
+            if record["telegram_id"] == user_id:
+                return True
 
-    def is_user_registered(self, user_id: int, chat_id: int) -> bool:
-        users = self._get_all_users_id(chat_id)
-        return user_id in users
+        return False
 
-    def _get_users_count(self) -> int:
-        cur = self._con.cursor()
-
-        count = cur.execute("""SELECT COUNT(*) FROM users""").fetchone()[0]
+    async def _get_users_count(self) -> int:
+        query = "SELECT COUNT(*) FROM users"
+        count = await self._con.execute(query)
 
         return count
-
-    def _get_all_users_id(self, chat_id: int) -> list:
-        cur = self._con.cursor()
-
-        data = cur.execute("SELECT telegram_id FROM users WHERE chat_id == ?", (chat_id,)).fetchall()
-        return [user_id for (user_id, ) in data]
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, tb):
-        if exc_type is not None:
-            print(exc_type, exc_value, tb)
-        self._con.commit()
-        self._con.close()
-
-        logger.info('Disconnected from database.')

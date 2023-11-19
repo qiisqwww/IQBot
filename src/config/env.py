@@ -1,5 +1,4 @@
 from os import getenv
-from dotenv import load_dotenv
 
 __all__ = [
     "UndefinedEnvError",
@@ -15,7 +14,6 @@ class UndefinedEnvError(Exception):
 
 class StrEnv(str):
     def __new__(cls, env_name: str):
-        load_dotenv()
 
         env = getenv(env_name, None)
         if env is None:
