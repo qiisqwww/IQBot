@@ -31,6 +31,7 @@ async def reg_cmd(message: types.Message, pool: Pool) -> None:
         users_service = UsersService(con)
         await users_service.register(
             user_id=int(message.from_user.id),
+            user_name=message.from_user.username,
             chat_id=int(message.chat.id)
         )
 

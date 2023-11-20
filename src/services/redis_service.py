@@ -15,7 +15,7 @@ class RedisService:
         return await self._con.get("chng"+user_id) is not None
 
     async def set_user_throttling(self, user_id: str) -> None:
-        await self._con.set("thr"+user_id, 0, ex=10)
+        await self._con.set("thr"+user_id, 0, ex=25)
 
     async def increase_user_throttling(self, user_id: str) -> None:
         await self._con.incr("thr"+user_id)

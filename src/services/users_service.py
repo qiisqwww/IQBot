@@ -7,12 +7,12 @@ from src.dto import User
 
 
 class UsersService(Service):
-    async def register(self, user_id: int, chat_id: int) -> None:
+    async def register(self, user_id: int, user_name: str, chat_id: int) -> None:
         query = ("INSERT INTO users "
-                 "(telegram_id, iq, chat_id)"
-                 "VALUES ($1, 0, $2)")
+                 "(telegram_id, user_name, iq, chat_id)"
+                 "VALUES ($1, $2, 0, $3)")
 
-        await self._con.execute(query, user_id, chat_id)
+        await self._con.execute(query, user_id, user_name, chat_id)
 
     async def get_iq(self, user_id: int, chat_id: int) -> int:
         query = "SELECT iq FROM users WHERE telegram_id = $1 AND chat_id = $2"

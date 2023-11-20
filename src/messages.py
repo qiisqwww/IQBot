@@ -58,14 +58,14 @@ def leaderboard_message(leaderboard: list[User]) -> str:
 
     i = 0
     for leader in leaderboard:
-        leaderboard_text += f"""{i + 1}. <a href="tg://user?id={leader.telegram_id}">{leader.iq} </a>IQ\n"""
+        leaderboard_text += f"""{i + 1}. <a href="tg://user?id={leader.telegram_id}">{leader.user_name} </a>{leader.iq} IQ\n"""
         i+=1
 
     return leaderboard_text
 
 
-def dumb_message(user_id: int, iq: int) -> str:
+def dumb_message(dumb: User) -> str:
     dumb_text = (f"""После сессии отлетает:\n\n"""
-                 f"""-1. <a href="tg://user?id={user_id}">{iq} </a>IQ""")
+                 f"""-1. <a href="tg://user?id={dumb.telegram_id}">{dumb.user_name} </a> {dumb.iq} IQ""")
 
     return dumb_text

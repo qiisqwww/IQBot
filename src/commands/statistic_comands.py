@@ -41,7 +41,7 @@ async def get_dumb_cmd(message: types.Message, pool: Pool) -> None:
         users_serivce = UsersService(con)
         dumb = await users_serivce.get_dumb(chat_id=int(message.chat.id))
 
-    await message.answer(dumb_message(dumb.telegram_id, dumb.iq), parse_mode=ParseMode.HTML)
+    await message.answer(dumb_message(dumb), parse_mode=ParseMode.HTML)
 
 
 """@router.message(Command('stats'))
