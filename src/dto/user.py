@@ -1,15 +1,13 @@
 from dataclasses import dataclass
 from typing import Mapping, Self
 
-from .dto import DTO
-
 __all__ = [
     "User",
 ]
 
 
 @dataclass(slots=True, unsafe_hash=True)
-class User(DTO):
+class User():
     telegram_id: int
     user_name: str
     iq: int
